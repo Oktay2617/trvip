@@ -12,7 +12,7 @@ def main():
     base = "https://trgoals"
     domain = ""
     
-    print("\n🔍 Domain aranıyor: trgoals1393.xyz → trgoals2100.xyz")
+    print("\n🔍 Domain aranıyor: trgoals1407.xyz → trgoals2100.xyz")
     for i in range(1393, 2101):
         test_domain = f"{base}{i}.xyz"
         try:
@@ -29,7 +29,7 @@ def main():
     
     if not domain:
         print("❌ UYARI: Hiçbir domain çalışmıyor - işlem sonlandırılacak.")
-        sys.exit(1) # Domain yoksa script'i durdur
+        sys.exit(1)
     
     # Kanallar
     channel_ids = {
@@ -67,7 +67,6 @@ def main():
         "yayinex8": "Tâbii 8"
     }
     
-    # DEĞİŞİKLİK 1: Klasör işlemleri kaldırıldı, tek dosya için içerik listesi oluşturuldu.
     m3u_content = []
     output_filename = "kanallar.m3u8"
 
@@ -94,11 +93,8 @@ def main():
                 continue
             
             baseurl = match.group(1)
-            
-            # DEĞİŞİKLİK 2: Proxy ve URL encode işlemi kaldırıldı. Direkt link oluşturuluyor.
             direct_url = f"{baseurl}{channel_id}.m3u8"
             
-            # DEĞİŞİKLİK 3: Kanallar tek dosyaya eklenmek üzere M3U formatında listeye ekleniyor.
             m3u_content.append(f'#EXTINF:-1 tvg-name="{channel_name}",{channel_name}')
             m3u_content.append(direct_url)
             
@@ -117,20 +113,25 @@ def main():
             print(f"❌ Beklenmeyen hata: {e}")
             failed += 1
     
-    # DEĞİŞİKLİK 4: Döngü bittikten sonra, eğer en az bir kanal bulunduysa tüm içerik tek dosyaya yazılıyor.
     if created > 0:
         try:
+            # DEĞİŞİKLİK: Dinamik header oluşturuluyor.
+            # Script'in başında bulunan 'domain' değişkeni burada kullanılıyor.
+            header = f"""#EXTM3U
+#EXT-X-USER-AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+#EXT-X-REFERER:{domain}/
+#EXT-X-ORIGIN:{domain}
+"""
             with open(output_filename, "w", encoding="utf-8") as f:
-                f.write("#EXTM3U\n") # M3U dosyasının başlangıç etiketi
-                f.write("\n".join(m3u_content))
+                f.write(header) # Yeni, dinamik başlık yazılıyor
+                f.write("\n\n") # Başlık ile kanallar arasına boşluk ekleniyor
+                f.write("\n".join(m3u_content)) # Kanal listesi yazılıyor
             print(f"\n📂 Tüm kanallar başarıyla '{output_filename}' dosyasına kaydedildi.")
         except Exception as e:
             print(f"\n❌ KRİTİK HATA: Dosya yazılamadı: {e}")
     else:
         print("\nℹ️  Hiçbir kanal linki bulunamadığı için dosya oluşturulmadı.")
 
-
-    # Sonuç raporu
     print("\n" + "="*50)
     print("📊 İŞLEM SONUCLARI")
     print("="*50)
