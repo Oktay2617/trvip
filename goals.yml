@@ -8,6 +8,8 @@ on:
 jobs:
   extract:
     runs-on: ubuntu-latest
+    permissions:      # <--- BU BLOK EKLENECEK
+      contents: write # <--- Depoya yazma izni ver
 
     steps:
       - name: Checkout repository
