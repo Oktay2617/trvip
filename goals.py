@@ -31,52 +31,59 @@ def main():
         print("❌ UYARI: Hiçbir domain çalışmıyor - işlem sonlandırılacak.")
         sys.exit(1)
     
-    # Kanallar
-    channel_ids = {
-        "yayinzirve": "beIN Sports 1 ☪️",
-        "yayininat": "beIN Sports 1 ⭐",
-        "yayin1": "beIN Sports 1 ♾️",
-        "yayinb2": "beIN Sports 2",
-        "yayinb3": "beIN Sports 3",
-        "yayinb4": "beIN Sports 4",
-        "yayinb5": "beIN Sports 5",
-        "yayinbm1": "beIN Sports 1 Max",
-        "yayinbm2": "beIN Sports 2 Max",
-        "yayinss": "Saran Sports 1",
-        "yayinss2": "Saran Sports 2",
-        "yayint1": "Tivibu Sports 1",
-        "yayint2": "Tivibu Sports 2",
-        "yayint3": "Tivibu Sports 3",
-        "yayint4": "Tivibu Sports 4",
-        "yayinsmarts": "Smart Sports",
-        "yayinsms2": "Smart Sports 2",
-        "yayintrtspor": "TRT Spor",
-        "yayintrtspor2": "TRT Spor 2",
-        "yayinas": "A Spor",
-        "yayinatv": "ATV",
-        "yayintv8": "TV8",
-        "yayintv85": "TV8.5",
-        "yayinnbatv": "NBA TV",
-        "yayinex1": "Tâbii 1",
-        "yayinex2": "Tâbii 2",
-        "yayinex3": "Tâbii 3",
-        "yayinex4": "Tâbii 4",
-        "yayinex5": "Tâbii 5",
-        "yayinex6": "Tâbii 6",
-        "yayinex7": "Tâbii 7",
-        "yayinex8": "Tâbii 8"
+    # DEĞİŞİKLİK 1: Kanal veri yapısı güncellendi.
+    # Artık her kanal için bir tuple (demet) içinde (Kanal Adı, Kategori) bilgisi tutuluyor.
+    channels = {
+        # BeinSports Kategorisi
+        "yayinzirve": ("beIN Sports 1 ☪️", "BeinSports"),
+        "yayininat": ("beIN Sports 1 ⭐", "BeinSports"),
+        "yayin1": ("beIN Sports 1 ♾️", "BeinSports"),
+        "yayinb2": ("beIN Sports 2", "BeinSports"),
+        "yayinb3": ("beIN Sports 3", "BeinSports"),
+        "yayinb4": ("beIN Sports 4", "BeinSports"),
+        "yayinb5": ("beIN Sports 5", "BeinSports"),
+        "yayinbm1": ("beIN Sports 1 Max", "BeinSports"),
+        "yayinbm2": ("beIN Sports 2 Max", "BeinSports"),
+        # Spor Kategorisi
+        "yayinss": ("Saran Sports 1", "Spor"),
+        "yayinss2": ("Saran Sports 2", "Spor"),
+        "yayint1": ("Tivibu Sports 1", "Spor"),
+        "yayint2": ("Tivibu Sports 2", "Spor"),
+        "yayint3": ("Tivibu Sports 3", "Spor"),
+        "yayint4": ("Tivibu Sports 4", "Spor"),
+        "yayinsmarts": ("Smart Sports", "Spor"),
+        "yayinsms2": ("Smart Sports 2", "Spor"),
+        "yayintrtspor": ("TRT Spor", "Spor"),
+        "yayintrtspor2": ("TRT Spor 2", "Spor"),
+        "yayinas": ("A Spor", "Spor"),
+        "yayinnbatv": ("NBA TV", "Spor"),
+        # Ulusal Kategorisi
+        "yayinatv": ("ATV", "Ulusal"),
+        "yayintv8": ("TV8", "Ulusal"),
+        "yayintv85": ("TV8.5", "Ulusal"),
+        # Tabii Kategorisi
+        "yayinex1": ("Tâbii 1", "Tabii"),
+        "yayinex2": ("Tâbii 2", "Tabii"),
+        "yayinex3": ("Tâbii 3", "Tabii"),
+        "yayinex4": ("Tâbii 4", "Tabii"),
+        "yayinex5": ("Tâbii 5", "Tabii"),
+        "yayinex6": ("Tâbii 6", "Tabii"),
+        "yayinex7": ("Tâbii 7", "Tabii"),
+        "yayinex8": ("Tâbii 8", "Tabii")
     }
     
     m3u_content = []
     output_filename = "kanallar.m3u8"
 
-    print(f"\n📺 {len(channel_ids)} kanal işleniyor...")
+    print(f"\n📺 {len(channels)} kanal işleniyor...")
     created = 0
     failed = 0
     
-    for i, (channel_id, channel_name) in enumerate(channel_ids.items(), 1):
+    # DEĞİŞİKLİK 2: Döngü, yeni veri yapısını okuyacak şekilde güncellendi.
+    # (channel_name, category) tuple'ı ayrıştırılıyor.
+    for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
         try:
-            print(f"\n[{i}/{len(channel_ids)}] {channel_name} işleniyor...")
+            print(f"\n[{i}/{len(channels)}] {channel_name} ({category}) işleniyor...")
             
             url = f"{domain}/channel.html?id={channel_id}"
             response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
@@ -95,7 +102,8 @@ def main():
             baseurl = match.group(1)
             direct_url = f"{baseurl}{channel_id}.m3u8"
             
-            m3u_content.append(f'#EXTINF:-1 tvg-name="{channel_name}",{channel_name}')
+            # DEĞİŞİKLİK 3: M3U satırına 'group-title' (kategori) eklendi.
+            m3u_content.append(f'#EXTINF:-1 tvg-name="{channel_name}" group-title="{category}",{channel_name}')
             m3u_content.append(direct_url)
             
             print(f"✅ {channel_name} → link bulundu.")
@@ -115,17 +123,15 @@ def main():
     
     if created > 0:
         try:
-            # DEĞİŞİKLİK: Dinamik header oluşturuluyor.
-            # Script'in başında bulunan 'domain' değişkeni burada kullanılıyor.
             header = f"""#EXTM3U
 #EXT-X-USER-AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
 #EXT-X-REFERER:{domain}/
 #EXT-X-ORIGIN:{domain}
 """
             with open(output_filename, "w", encoding="utf-8") as f:
-                f.write(header) # Yeni, dinamik başlık yazılıyor
-                f.write("\n\n") # Başlık ile kanallar arasına boşluk ekleniyor
-                f.write("\n".join(m3u_content)) # Kanal listesi yazılıyor
+                f.write(header)
+                f.write("\n\n")
+                f.write("\n".join(m3u_content))
             print(f"\n📂 Tüm kanallar başarıyla '{output_filename}' dosyasına kaydedildi.")
         except Exception as e:
             print(f"\n❌ KRİTİK HATA: Dosya yazılamadı: {e}")
