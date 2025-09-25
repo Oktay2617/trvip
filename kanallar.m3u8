@@ -22,29 +22,29 @@ https://eight.4928d54d950ee70q48.lat/yayinb5.m3u8
 https://eight.4928d54d950ee70q48.lat/yayinbm1.m3u8
 #EXTINF:-1 tvg-name="beIN Sports 2 Max" group-title="BeinSports",beIN Sports 2 Max
 https://eight.4928d54d950ee70q48.lat/yayinbm2.m3u8
-#EXTINF:-1 tvg-name="Saran Sports 1" group-title="Spor",Saran Sports 1
+#EXTINF:-1 tvg-name="Saran Sports 1" group-title="S_Sports",Saran Sports 1
 https://eight.4928d54d950ee70q48.lat/yayinss.m3u8
-#EXTINF:-1 tvg-name="Saran Sports 2" group-title="Spor",Saran Sports 2
+#EXTINF:-1 tvg-name="Saran Sports 2" group-title="S_Sportsr",Saran Sports 2
 https://eight.4928d54d950ee70q48.lat/yayinss2.m3u8
-#EXTINF:-1 tvg-name="Tivibu Sports 1" group-title="Spor",Tivibu Sports 1
+#EXTINF:-1 tvg-name="Tivibu Sports 1" group-title="Tivibu",Tivibu Sports 1
 https://eight.4928d54d950ee70q48.lat/yayint1.m3u8
-#EXTINF:-1 tvg-name="Tivibu Sports 2" group-title="Spor",Tivibu Sports 2
+#EXTINF:-1 tvg-name="Tivibu Sports 2" group-title="Tivibu",Tivibu Sports 2
 https://eight.4928d54d950ee70q48.lat/yayint2.m3u8
-#EXTINF:-1 tvg-name="Tivibu Sports 3" group-title="Spor",Tivibu Sports 3
+#EXTINF:-1 tvg-name="Tivibu Sports 3" group-title="Tivibu",Tivibu Sports 3
 https://eight.4928d54d950ee70q48.lat/yayint3.m3u8
-#EXTINF:-1 tvg-name="Tivibu Sports 4" group-title="Spor",Tivibu Sports 4
+#EXTINF:-1 tvg-name="Tivibu Sports 4" group-title="Tivibu",Tivibu Sports 4
 https://eight.4928d54d950ee70q48.lat/yayint4.m3u8
-#EXTINF:-1 tvg-name="Smart Sports" group-title="Spor",Smart Sports
+#EXTINF:-1 tvg-name="Smart Sports" group-title="Smart_Sports",Smart Sports
 https://eight.4928d54d950ee70q48.lat/yayinsmarts.m3u8
-#EXTINF:-1 tvg-name="Smart Sports 2" group-title="Spor",Smart Sports 2
+#EXTINF:-1 tvg-name="Smart Sports 2" group-title="Smart_Sports",Smart Sports 2
 https://eight.4928d54d950ee70q48.lat/yayinsms2.m3u8
-#EXTINF:-1 tvg-name="TRT Spor" group-title="Spor",TRT Spor
+#EXTINF:-1 tvg-name="TRT Spor" group-title="TRT",TRT Spor
 https://eight.4928d54d950ee70q48.lat/yayintrtspor.m3u8
-#EXTINF:-1 tvg-name="TRT Spor 2" group-title="Spor",TRT Spor 2
+#EXTINF:-1 tvg-name="TRT Spor 2" group-title="TRT",TRT Spor 2
 https://eight.4928d54d950ee70q48.lat/yayintrtspor2.m3u8
-#EXTINF:-1 tvg-name="A Spor" group-title="Spor",A Spor
+#EXTINF:-1 tvg-name="A Spor" group-title="A_Spor",A Spor
 https://eight.4928d54d950ee70q48.lat/yayinas.m3u8
-#EXTINF:-1 tvg-name="NBA TV" group-title="Spor",NBA TV
+#EXTINF:-1 tvg-name="NBA TV" group-title="NBA",NBA TV
 https://eight.4928d54d950ee70q48.lat/yayinnbatv.m3u8
 #EXTINF:-1 tvg-name="ATV" group-title="Ulusal",ATV
 https://eight.4928d54d950ee70q48.lat/yayinatv.m3u8
