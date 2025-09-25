@@ -46,7 +46,7 @@ def main():
         "yayinbm2": ("beIN Sports 2 Max", "BeinSports"),
         # Spor Kategorisi
         "yayinss": ("Saran Sports 1", "S_Sports"),
-        "yayinss2": ("Saran Sports 2", "S_Sportsr"),
+        "yayinss2": ("Saran Sports 2", "S_Sports"),
         "yayint1": ("Tivibu Sports 1", "Tivibu"),
         "yayint2": ("Tivibu Sports 2", "Tivibu"),
         "yayint3": ("Tivibu Sports 3", "Tivibu"),
