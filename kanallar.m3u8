@@ -1,7 +1,7 @@
 #EXTM3U
 #EXT-X-USER-AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
-#EXT-X-REFERER:https://trgoals1416.xyz/
-#EXT-X-ORIGIN:https://trgoals1416.xyz
+#EXT-X-REFERER:https://trgoals1417.xyz/
+#EXT-X-ORIGIN:https://trgoals1417.xyz
 
 
 #EXTINF:-1 tvg-name="beIN Sports 1 ☪️" group-title="BeinSports",beIN Sports 1 ☪️
@@ -60,6 +60,8 @@ https://two.04bf112a615942b2.sbs/yayinex2.m3u8
 https://two.04bf112a615942b2.sbs/yayinex3.m3u8
 #EXTINF:-1 tvg-name="Tâbii 4" group-title="Tabii",Tâbii 4
 https://two.04bf112a615942b2.sbs/yayinex4.m3u8
+#EXTINF:-1 tvg-name="Tâbii 5" group-title="Tabii",Tâbii 5
+https://two.04bf112a615942b2.sbs/yayinex5.m3u8
 #EXTINF:-1 tvg-name="Tâbii 6" group-title="Tabii",Tâbii 6
 https://two.04bf112a615942b2.sbs/yayinex6.m3u8
 #EXTINF:-1 tvg-name="Tâbii 7" group-title="Tabii",Tâbii 7
