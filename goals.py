@@ -14,7 +14,6 @@ def main():
     start_range = 1400
     end_range = 2500
 
-    # DEĞİŞİKLİK: Gerçek bir tarayıcıdan alınmış, daha kapsamlı başlıklar (headers)
     headers = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -28,33 +27,38 @@ def main():
         'Upgrade-Insecure-Requests': '1',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
     }
+    
+    # DEĞİŞİKLİK: Sadece "trgoals" ve ardından sayı içeren domainleri kabul edecek bir kural (regex)
+    domain_pattern = re.compile(r'https://trgoals[0-9]+\.xyz')
 
     print(f"\n🔍 Domain aranıyor: trgoals{start_range}.xyz → trgoals{end_range-1}.xyz")
     for i in range(start_range, end_range):
         test_domain = f"{base}{i}.xyz"
         try:
-            # İstek atılırken yeni 'headers' kullanılıyor ve timeout biraz artırıldı.
             response = requests.get(test_domain, timeout=10, allow_redirects=True, headers=headers)
             
-            final_url = response.url
+            # Yönlendirme sonrası ulaşılan son URL'yi al ve temizle (sondaki / işaretini kaldır)
+            final_url = response.url.rstrip('/')
 
-            if response.status_code == 200 and "trgoals" in final_url:
-                found_domain = '/'.join(final_url.split('/')[:3])
-                domain = found_domain
-                print(f"✅ Domain yönlendirme ile bulundu: {test_domain} -> {domain}")
-                break
+            # KRİTİK DEĞİŞİKLİK:
+            # Durum kodu 200 OLMALI VE bulunan URL'nin formatı bizim istediğimiz NUMARALI formata uymalı.
+            if response.status_code == 200 and domain_pattern.match(final_url):
+                domain = final_url
+                print(f"✅ Geçerli ve numaralı domain bulundu: {domain}")
+                break # Doğru formatı bulduğumuz için aramayı durdur.
             else:
-                print(f"⏳ Denenen domain: {test_domain} (Status: {response.status_code})")
+                # Eğer format uymuyorsa (örn: trgoalsgiris.xyz), bunu bir yönlendirme olarak bildir ama devam et.
+                print(f"⏳ Denenen domain: {test_domain} -> Yönlendi: {final_url} (Geçersiz format, devam ediliyor...)")
 
         except requests.exceptions.RequestException as e:
             print(f"⏳ Denenen domain: {test_domain} (Hata: {str(e)[:40]}...)")
             continue
     
     if not domain:
-        print("❌ UYARI: Hiçbir domain çalışmıyor - işlem sonlandırılacak.")
+        print("❌ UYARI: Hiçbir geçerli domain bulunamadı - işlem sonlandırılacak.")
         sys.exit(1)
     
-    # KANAL LİSTESİ VE KODUN GERİ KALANI AYNI...
+    # --- KODUN GERİ KALANI DEĞİŞMEDİ ---
     channels = {
         "yayinzirve": ("beIN Sports 1 ☪️", "BeinSports"),
         "yayininat": ("beIN Sports 1 ⭐", "BeinSports"),
@@ -78,8 +82,8 @@ def main():
         "yayinas": ("A Spor", "Spor"),
         "yayinnbatv": ("NBA TV", "Spor"),
         "yayinatv": ("ATV", "Ulusal"),
-        "yayintv8": ("TV8", "Ulusal"),
-        "yayintv85": ("TV8.5", "Ulusal"),
+        "yayintv_8": ("TV8", "Ulusal"),
+        "yayintv_85": ("TV8.5", "Ulusal"),
         "yayinex1": ("Tâbii 1", "Tabii"),
         "yayinex2": ("Tâbii 2", "Tabii"),
         "yayinex3": ("Tâbii 3", "Tabii"),
@@ -100,7 +104,6 @@ def main():
     for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
         try:
             print(f"\n[{i}/{len(channels)}] {channel_name} ({category}) işleniyor...")
-            # Buradaki istek için de aynı gelişmiş başlıkları kullanalım
             url = f"{domain}/channel.html?id={channel_id}"
             response = requests.get(url, headers=headers, timeout=10)
             
