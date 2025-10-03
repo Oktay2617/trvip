@@ -55,75 +55,65 @@ def main():
             browser.close()
             sys.exit(1)
 
-        print(f"\n📡 Kanallar ana sayfadan çekiliyor: {domain}")
-        try:
-            page.goto(domain, timeout=20000, wait_until='domcontentloaded')
-            print("... Sayfadaki dinamik içeriklerin yüklenmesi için 3 saniye bekleniyor ...")
-            page.wait_for_timeout(3000)
+        # --- DEĞİŞİKLİK: Dinamik kanal çekme mantığı kaldırıldı, sizin verdiğiniz sabit liste eklendi ---
+        print(f"\n📡 Tanımlanan statik kanal listesi kullanılacak.")
+        channels = {
+            # BeinSports Kategorisi
+            "yayinzirve": ("beIN Sports 1 ☪️", "BeinSports"),
+            "yayininat": ("beIN Sports 1 ⭐", "BeinSports"),
+            "yayin1": ("beIN Sports 1 ♾️", "BeinSports"),
+            "yayinb2": ("beIN Sports 2", "BeinSports"),
+            "yayinb3": ("beIN Sports 3", "BeinSports"),
+            "yayinb4": ("beIN Sports 4", "BeinSports"),
+            "yayinb5": ("beIN Sports 5", "BeinSports"),
+            "yayinbm1": ("beIN Sports 1 Max", "BeinSports"),
+            "yayinbm2": ("beIN Sports 2 Max", "BeinSports"),
+            # S Sports Kategorisi
+            "yayinss": ("Saran Sports 1", "S Sports"),
+            "yayinss2": ("Saran Sports 2", "S Sports"),
+            # Tivibu Kategorisi
+            "yayint1": ("Tivibu Sports 1", "Tivibu"),
+            "yayint2": ("Tivibu Sports 2", "Tivibu"),
+            "yayint3": ("Tivibu Sports 3", "Tivibu"),
+            "yayint4": ("Tivibu Sports 4", "Tivibu"),
+            # Smart Sports Kategorisi
+            "yayinsmarts": ("Smart Sports", "Smart Sports"),
+            "yayinsms2": ("Smart Sports 2", "Smart Sports"),
+            # NBA Kategorisi
+            "yayinnbatv": ("NBA TV", "NBA"),
+            # Ulusal Kategorisi
+            "yayinatv": ("ATV", "Ulusal"),
+            "yayintv8": ("TV8", "Ulusal"),
+            "yayintv85": ("TV8.5", "Ulusal"),
+            "yayinas": ("A Spor", "Ulusal"),
+            # Tabii Kategorisi
+            "yayinex1": ("Tâbii 1", "Tabii"),
+            "yayinex2": ("Tâbii 2", "Tabii"),
+            "yayinex3": ("Tâbii 3", "Tabii"),
+            "yayinex4": ("Tâbii 4", "Tabii"),
+            "yayinex5": ("Tâbii 5", "Tabii"),
+            "yayinex6": ("Tâbii 6", "Tabii"),
+            "yayinex7": ("Tâbii 7", "Tabii"),
+            "yayinex8": ("Tâbii 8", "Tabii"),
+            # TRT Kategorisi
+            "yayintrt1": ("TRT 1", "TRT"),
+            "yayintrtspor": ("TRT Spor", "TRT"),
+            "yayintrtspor2": ("TRT Spor 2", "TRT"),
+            # Euro Sport Kategorisi
+            "yayineu1": ("Euro Sport 1", "Euro Sport"),
+            "yayineu2": ("Euro Sport 2", "Euro Sport")
+        }
+        print(f"✅ {len(channels)} adet kanal işlenmek üzere yüklendi.")
 
-            channels = {}
-            tab_ids_to_scrape = ["matches-tab", "24-7-tab"]
-            
-            for tab_id in tab_ids_to_scrape:
-                print(f"-> '{tab_id}' sekmesi taranıyor...")
-                tab_content = page.locator(f'div[id="{tab_id}"]')
-                
-                if tab_content.count() > 0:
-                    channel_links = tab_content.locator('a.channel-item').all()
-                    for link in channel_links:
-                        href = link.get_attribute('href')
-                        name_div = link.locator('div.channel-name')
-                        if href and name_div and 'id=' in href:
-                            channel_id = href.split('id=')[-1]
-                            channel_name = name_div.inner_text().strip()
-                            
-                            # DEĞİŞİKLİK 1: Dinamik Grup Adlandırma
-                            category = ""
-                            if tab_id == "matches-tab":
-                                category = "Maç Yayınları"
-                            else: # 24-7-tab için
-                                # Kanal adının ilk kelimesini al
-                                first_word = channel_name.split(' ')[0]
-                                category = first_word
-                                
-                            channels[channel_id] = (channel_name, category)
-                else:
-                    print(f"⚠️ '{tab_id}' sekmesi bulunamadı.")
-            
-            print(f"✅ Toplam {len(channels)} adet benzersiz kanal/yayın bulundu.")
-        except PlaywrightError as e:
-            print(f"❌ Ana sayfa okunurken hata oluştu: {e}")
-            browser.close()
-            sys.exit(1)
-
-        if not channels:
-            print("❌ Hiç kanal bulunamadı. İşlem durduruluyor.")
-            browser.close()
-            sys.exit(1)
-            
-        # DEĞİŞİKLİK 2: Kanal Listesini Sıralama
-        # 'Maç Yayınları' kategorisini listenin başına almak için sırala
-        print("\n🔄 Kanallar sıralanıyor: Maç yayınları en üste alınacak...")
-        sorted_channels = sorted(channels.items(), key=lambda item: item[1][1] != 'Maç Yayınları')
 
         m3u_content = []
         output_filename = "kanallar.m3u8"
-        print(f"\n📺 {len(sorted_channels)} kanal/yayın için linkler işleniyor...")
+        print(f"\n📺 {len(channels)} kanal için linkler işleniyor...")
         created = 0
         
-        # Sıralanmış liste üzerinden döngüye gir
-        for i, (channel_id, (channel_name, category)) in enumerate(sorted_channels, 1):
-            if channel_id.startswith('http'):
-                print(f"[{i}/{len(sorted_channels)}] {channel_name} (Doğrudan Link) işleniyor...", end=' ')
-                direct_url = channel_id
-                m3u_content.append(f'#EXTINF:-1 tvg-name="{channel_name}" group-title="{category}",{channel_name}')
-                m3u_content.append(direct_url)
-                print("-> ✅ Link eklendi.")
-                created += 1
-                continue
-
+        for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
             try:
-                print(f"[{i}/{len(sorted_channels)}] {channel_name} işleniyor...", end=' ')
+                print(f"[{i}/{len(channels)}] {channel_name} işleniyor...", end=' ')
                 url = f"{domain}/channel.html?id={channel_id}"
                 page.goto(url, timeout=15000, wait_until='domcontentloaded')
                 
@@ -166,7 +156,7 @@ def main():
         print("📊 İŞLEM SONUCLARI")
         print("="*50)
         print(f"✅ Başarıyla oluşturulan link: {created}")
-        print(f"❌ Başarısız veya atlanan kanal: {len(sorted_channels) - created}")
+        print(f"❌ Başarısız veya atlanan kanal: {len(channels) - created}")
         print("\n🎉 İşlem başarıyla tamamlandı!")
 
 if __name__ == "__main__":
