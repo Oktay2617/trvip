@@ -59,9 +59,11 @@ def main():
         try:
             page.goto(domain, timeout=20000, wait_until='domcontentloaded')
             
+            # DEĞİŞİKLİK: Olası JavaScript yüklemeleri için 3 saniye bekle
+            print("... Sayfadaki dinamik içeriklerin yüklenmesi için 3 saniye bekleniyor ...")
+            page.wait_for_timeout(3000)
+
             channels = {}
-            
-            # DEĞİŞİKLİK: Artık birden fazla sekme ID'sini arayacağız
             tab_ids_to_scrape = ["matches-tab", "24-7-tab"]
             
             for tab_id in tab_ids_to_scrape:
@@ -76,7 +78,6 @@ def main():
                         if href and name_div and 'id=' in href:
                             channel_id = href.split('id=')[-1]
                             channel_name = name_div.inner_text().strip()
-                            # Kanalları kategorilerine göre ayıralım
                             category = "Maç Yayınları" if tab_id == "matches-tab" else "7/24 Kanallar"
                             channels[channel_id] = (channel_name, category)
                 else:
@@ -94,12 +95,11 @@ def main():
             sys.exit(1)
 
         m3u_content = []
-        output_filename = "kanallar.m3u8"
+        output_filename = "kanallar.m.3u8"
         print(f"\n📺 {len(channels)} kanal/yayın için linkler işleniyor...")
         created = 0
         
         for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
-            # Eğer channel_id zaten bir URL ise, baseurl araması yapma
             if channel_id.startswith('http'):
                 print(f"[{i}/{len(channels)}] {channel_name} (Doğrudan Link) işleniyor...", end=' ')
                 direct_url = channel_id
