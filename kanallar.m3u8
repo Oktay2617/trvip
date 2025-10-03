@@ -1,70 +1,56 @@
 #EXTM3U
-#EXT-X-USER-AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
-#EXT-X-REFERER:https://trgoals1422.xyz/
-#EXT-X-ORIGIN:https://trgoals1422.xyz
+#EXT-X-USER-AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36
+#EXT-X-REFERER:https://trgoals1423.xyz/
+#EXT-X-ORIGIN:https://trgoals1423.xyz
 
 
-#EXTINF:-1 tvg-name="beIN Sports 1 ☪️" group-title="BeinSports",beIN Sports 1 ☪️
-https://three.04bf112a615942b3.sbs/yayinzirve.m3u8
-#EXTINF:-1 tvg-name="beIN Sports 1 ⭐" group-title="BeinSports",beIN Sports 1 ⭐
-https://three.04bf112a615942b3.sbs/yayininat.m3u8
-#EXTINF:-1 tvg-name="beIN Sports 1 ♾️" group-title="BeinSports",beIN Sports 1 ♾️
+#EXTINF:-1 tvg-name="BeIN Sports 1" group-title="7/24 Kanallar",BeIN Sports 1
 https://three.04bf112a615942b3.sbs/yayin1.m3u8
-#EXTINF:-1 tvg-name="beIN Sports 2" group-title="BeinSports",beIN Sports 2
+#EXTINF:-1 tvg-name="BeIN Sports 2" group-title="7/24 Kanallar",BeIN Sports 2
 https://three.04bf112a615942b3.sbs/yayinb2.m3u8
-#EXTINF:-1 tvg-name="beIN Sports 3" group-title="BeinSports",beIN Sports 3
+#EXTINF:-1 tvg-name="BeIN Sports 3" group-title="7/24 Kanallar",BeIN Sports 3
 https://three.04bf112a615942b3.sbs/yayinb3.m3u8
-#EXTINF:-1 tvg-name="beIN Sports 4" group-title="BeinSports",beIN Sports 4
+#EXTINF:-1 tvg-name="BeIN Sports 4" group-title="7/24 Kanallar",BeIN Sports 4
 https://three.04bf112a615942b3.sbs/yayinb4.m3u8
-#EXTINF:-1 tvg-name="beIN Sports 5" group-title="BeinSports",beIN Sports 5
+#EXTINF:-1 tvg-name="BeIN Sports 5" group-title="7/24 Kanallar",BeIN Sports 5
 https://three.04bf112a615942b3.sbs/yayinb5.m3u8
-#EXTINF:-1 tvg-name="beIN Sports 1 Max" group-title="BeinSports",beIN Sports 1 Max
+#EXTINF:-1 tvg-name="BeIN Max 1" group-title="7/24 Kanallar",BeIN Max 1
 https://three.04bf112a615942b3.sbs/yayinbm1.m3u8
-#EXTINF:-1 tvg-name="beIN Sports 2 Max" group-title="BeinSports",beIN Sports 2 Max
+#EXTINF:-1 tvg-name="BeIN Max 2" group-title="7/24 Kanallar",BeIN Max 2
 https://three.04bf112a615942b3.sbs/yayinbm2.m3u8
-#EXTINF:-1 tvg-name="Saran Sports 1" group-title="S_Sports",Saran Sports 1
+#EXTINF:-1 tvg-name="S Sport" group-title="7/24 Kanallar",S Sport
 https://three.04bf112a615942b3.sbs/yayinss.m3u8
-#EXTINF:-1 tvg-name="Saran Sports 2" group-title="S_Sports",Saran Sports 2
+#EXTINF:-1 tvg-name="S Sport 2" group-title="7/24 Kanallar",S Sport 2
 https://three.04bf112a615942b3.sbs/yayinss2.m3u8
-#EXTINF:-1 tvg-name="Tivibu Sports 1" group-title="Tivibu",Tivibu Sports 1
+#EXTINF:-1 tvg-name="Tivibu 1" group-title="7/24 Kanallar",Tivibu 1
 https://three.04bf112a615942b3.sbs/yayint1.m3u8
-#EXTINF:-1 tvg-name="Tivibu Sports 2" group-title="Tivibu",Tivibu Sports 2
+#EXTINF:-1 tvg-name="Tivibu 2" group-title="7/24 Kanallar",Tivibu 2
 https://three.04bf112a615942b3.sbs/yayint2.m3u8
-#EXTINF:-1 tvg-name="Tivibu Sports 3" group-title="Tivibu",Tivibu Sports 3
+#EXTINF:-1 tvg-name="Tivibu 3" group-title="7/24 Kanallar",Tivibu 3
 https://three.04bf112a615942b3.sbs/yayint3.m3u8
-#EXTINF:-1 tvg-name="Tivibu Sports 4" group-title="Tivibu",Tivibu Sports 4
+#EXTINF:-1 tvg-name="Tivibu 4" group-title="7/24 Kanallar",Tivibu 4
 https://three.04bf112a615942b3.sbs/yayint4.m3u8
-#EXTINF:-1 tvg-name="Smart Sports" group-title="Smart_Sports",Smart Sports
+#EXTINF:-1 tvg-name="Smartspor" group-title="7/24 Kanallar",Smartspor
 https://three.04bf112a615942b3.sbs/yayinsmarts.m3u8
-#EXTINF:-1 tvg-name="Smart Sports 2" group-title="Smart_Sports",Smart Sports 2
+#EXTINF:-1 tvg-name="Smartspor 2" group-title="7/24 Kanallar",Smartspor 2
 https://three.04bf112a615942b3.sbs/yayinsms2.m3u8
-#EXTINF:-1 tvg-name="TRT Spor" group-title="TRT",TRT Spor
+#EXTINF:-1 tvg-name="TRT Spor" group-title="7/24 Kanallar",TRT Spor
 https://three.04bf112a615942b3.sbs/yayintrtspor.m3u8
-#EXTINF:-1 tvg-name="TRT Spor 2" group-title="TRT",TRT Spor 2
+#EXTINF:-1 tvg-name="TRT Spor 2" group-title="7/24 Kanallar",TRT Spor 2
 https://three.04bf112a615942b3.sbs/yayintrtspor2.m3u8
-#EXTINF:-1 tvg-name="A Spor" group-title="A_Spor",A Spor
+#EXTINF:-1 tvg-name="TRT 1" group-title="7/24 Kanallar",TRT 1
+https://three.04bf112a615942b3.sbs/yayintrt1.m3u8
+#EXTINF:-1 tvg-name="A Spor" group-title="7/24 Kanallar",A Spor
 https://three.04bf112a615942b3.sbs/yayinas.m3u8
-#EXTINF:-1 tvg-name="NBA TV" group-title="NBA",NBA TV
-https://three.04bf112a615942b3.sbs/yayinnbatv.m3u8
-#EXTINF:-1 tvg-name="ATV" group-title="Ulusal",ATV
+#EXTINF:-1 tvg-name="ATV" group-title="7/24 Kanallar",ATV
 https://three.04bf112a615942b3.sbs/yayinatv.m3u8
-#EXTINF:-1 tvg-name="TV8" group-title="Ulusal",TV8
+#EXTINF:-1 tvg-name="TV 8" group-title="7/24 Kanallar",TV 8
 https://three.04bf112a615942b3.sbs/yayintv8.m3u8
-#EXTINF:-1 tvg-name="TV8.5" group-title="Ulusal",TV8.5
+#EXTINF:-1 tvg-name="TV 8,5" group-title="7/24 Kanallar",TV 8,5
 https://three.04bf112a615942b3.sbs/yayintv85.m3u8
-#EXTINF:-1 tvg-name="Tâbii 1" group-title="Tabii",Tâbii 1
-https://three.04bf112a615942b3.sbs/yayinex1.m3u8
-#EXTINF:-1 tvg-name="Tâbii 2" group-title="Tabii",Tâbii 2
-https://three.04bf112a615942b3.sbs/yayinex2.m3u8
-#EXTINF:-1 tvg-name="Tâbii 3" group-title="Tabii",Tâbii 3
-https://three.04bf112a615942b3.sbs/yayinex3.m3u8
-#EXTINF:-1 tvg-name="Tâbii 4" group-title="Tabii",Tâbii 4
-https://three.04bf112a615942b3.sbs/yayinex4.m3u8
-#EXTINF:-1 tvg-name="Tâbii 5" group-title="Tabii",Tâbii 5
-https://three.04bf112a615942b3.sbs/yayinex5.m3u8
-#EXTINF:-1 tvg-name="Tâbii 6" group-title="Tabii",Tâbii 6
-https://three.04bf112a615942b3.sbs/yayinex6.m3u8
-#EXTINF:-1 tvg-name="Tâbii 7" group-title="Tabii",Tâbii 7
-https://three.04bf112a615942b3.sbs/yayinex7.m3u8
-#EXTINF:-1 tvg-name="Tâbii 8" group-title="Tabii",Tâbii 8
-https://three.04bf112a615942b3.sbs/yayinex8.m3u8
+#EXTINF:-1 tvg-name="NBA TV" group-title="7/24 Kanallar",NBA TV
+https://three.04bf112a615942b3.sbs/yayinnbatv.m3u8
+#EXTINF:-1 tvg-name="Euro Sport 1" group-title="7/24 Kanallar",Euro Sport 1
+https://three.04bf112a615942b3.sbs/yayineu1.m3u8
+#EXTINF:-1 tvg-name="Euro Sport 2" group-title="7/24 Kanallar",Euro Sport 2
+https://three.04bf112a615942b3.sbs/yayineu2.m3u8
