@@ -8,33 +8,54 @@ def main():
     print("🚀 PyGoals M3U8 Kanal İndirici Başlatılıyor...")
     print("⏰ Lütfen işlemin tamamlanmasını bekleyin...")
     
-    # Trgoals domain kontrol
     base = "https://trgoals"
     domain = ""
     
-    print("\n🔍 Domain aranıyor: trgoals1407.xyz → trgoals2100.xyz")
-    for i in range(1407, 2101):
+    start_range = 1400
+    end_range = 2500
+
+    # DEĞİŞİKLİK: Gerçek bir tarayıcıdan alınmış, daha kapsamlı başlıklar (headers)
+    headers = {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Sec-Ch-Ua': '"Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+    }
+
+    print(f"\n🔍 Domain aranıyor: trgoals{start_range}.xyz → trgoals{end_range-1}.xyz")
+    for i in range(start_range, end_range):
         test_domain = f"{base}{i}.xyz"
         try:
-            response = requests.head(test_domain, timeout=3)
-            if response.status_code == 200:
-                domain = test_domain
-                print(f"✅ Domain bulundu: {domain}")
+            # İstek atılırken yeni 'headers' kullanılıyor ve timeout biraz artırıldı.
+            response = requests.get(test_domain, timeout=10, allow_redirects=True, headers=headers)
+            
+            final_url = response.url
+
+            if response.status_code == 200 and "trgoals" in final_url:
+                found_domain = '/'.join(final_url.split('/')[:3])
+                domain = found_domain
+                print(f"✅ Domain yönlendirme ile bulundu: {test_domain} -> {domain}")
                 break
             else:
                 print(f"⏳ Denenen domain: {test_domain} (Status: {response.status_code})")
-        except Exception as e:
-            print(f"⏳ Denenen domain: {test_domain} (Hata: {str(e)[:30]}...)")
+
+        except requests.exceptions.RequestException as e:
+            print(f"⏳ Denenen domain: {test_domain} (Hata: {str(e)[:40]}...)")
             continue
     
     if not domain:
         print("❌ UYARI: Hiçbir domain çalışmıyor - işlem sonlandırılacak.")
         sys.exit(1)
     
-    # DEĞİŞİKLİK 1: Kanal veri yapısı güncellendi.
-    # Artık her kanal için bir tuple (demet) içinde (Kanal Adı, Kategori) bilgisi tutuluyor.
+    # KANAL LİSTESİ VE KODUN GERİ KALANI AYNI...
     channels = {
-        # BeinSports Kategorisi
         "yayinzirve": ("beIN Sports 1 ☪️", "BeinSports"),
         "yayininat": ("beIN Sports 1 ⭐", "BeinSports"),
         "yayin1": ("beIN Sports 1 ♾️", "BeinSports"),
@@ -44,24 +65,21 @@ def main():
         "yayinb5": ("beIN Sports 5", "BeinSports"),
         "yayinbm1": ("beIN Sports 1 Max", "BeinSports"),
         "yayinbm2": ("beIN Sports 2 Max", "BeinSports"),
-        # Spor Kategorisi
-        "yayinss": ("Saran Sports 1", "S_Sports"),
-        "yayinss2": ("Saran Sports 2", "S_Sports"),
-        "yayint1": ("Tivibu Sports 1", "Tivibu"),
-        "yayint2": ("Tivibu Sports 2", "Tivibu"),
-        "yayint3": ("Tivibu Sports 3", "Tivibu"),
-        "yayint4": ("Tivibu Sports 4", "Tivibu"),
-        "yayinsmarts": ("Smart Sports", "Smart_Sports"),
-        "yayinsms2": ("Smart Sports 2", "Smart_Sports"),
-        "yayintrtspor": ("TRT Spor", "TRT"),
-        "yayintrtspor2": ("TRT Spor 2", "TRT"),
-        "yayinas": ("A Spor", "A_Spor"),
-        "yayinnbatv": ("NBA TV", "NBA"),
-        # Ulusal Kategorisi
+        "yayinss": ("Saran Sports 1", "Spor"),
+        "yayinss2": ("Saran Sports 2", "Spor"),
+        "yayint1": ("Tivibu Sports 1", "Spor"),
+        "yayint2": ("Tivibu Sports 2", "Spor"),
+        "yayint3": ("Tivibu Sports 3", "Spor"),
+        "yayint4": ("Tivibu Sports 4", "Spor"),
+        "yayinsmarts": ("Smart Sports", "Spor"),
+        "yayinsms2": ("Smart Sports 2", "Spor"),
+        "yayintrtspor": ("TRT Spor", "Spor"),
+        "yayintrtspor2": ("TRT Spor 2", "Spor"),
+        "yayinas": ("A Spor", "Spor"),
+        "yayinnbatv": ("NBA TV", "Spor"),
         "yayinatv": ("ATV", "Ulusal"),
         "yayintv8": ("TV8", "Ulusal"),
         "yayintv85": ("TV8.5", "Ulusal"),
-        # Tabii Kategorisi
         "yayinex1": ("Tâbii 1", "Tabii"),
         "yayinex2": ("Tâbii 2", "Tabii"),
         "yayinex3": ("Tâbii 3", "Tabii"),
@@ -79,14 +97,12 @@ def main():
     created = 0
     failed = 0
     
-    # DEĞİŞİKLİK 2: Döngü, yeni veri yapısını okuyacak şekilde güncellendi.
-    # (channel_name, category) tuple'ı ayrıştırılıyor.
     for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
         try:
             print(f"\n[{i}/{len(channels)}] {channel_name} ({category}) işleniyor...")
-            
+            # Buradaki istek için de aynı gelişmiş başlıkları kullanalım
             url = f"{domain}/channel.html?id={channel_id}"
-            response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
+            response = requests.get(url, headers=headers, timeout=10)
             
             if response.status_code != 200:
                 print(f"❌ HTTP Hatası: {response.status_code}")
@@ -102,7 +118,6 @@ def main():
             baseurl = match.group(1)
             direct_url = f"{baseurl}{channel_id}.m3u8"
             
-            # DEĞİŞİKLİK 3: M3U satırına 'group-title' (kategori) eklendi.
             m3u_content.append(f'#EXTINF:-1 tvg-name="{channel_name}" group-title="{category}",{channel_name}')
             m3u_content.append(direct_url)
             
@@ -111,9 +126,6 @@ def main():
             
             time.sleep(0.1)
             
-        except requests.exceptions.Timeout:
-            print("❌ İstek zaman aşımına uğradı")
-            failed += 1
         except requests.exceptions.RequestException as e:
             print(f"❌ Ağ hatası: {e}")
             failed += 1
@@ -124,7 +136,7 @@ def main():
     if created > 0:
         try:
             header = f"""#EXTM3U
-#EXT-X-USER-AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36
+#EXT-X-USER-AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36
 #EXT-X-REFERER:{domain}/
 #EXT-X-ORIGIN:{domain}
 """
