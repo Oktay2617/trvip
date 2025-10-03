@@ -12,7 +12,6 @@ def find_working_domain(page):
     try:
         response = page.goto(MANUAL_DOMAIN, timeout=20000, wait_until='domcontentloaded')
         if response and response.ok:
-            # Sayfa URL'sinin sonundaki '/' işaretini kaldır
             final_url = page.url.rstrip('/')
             print(f"✅ Öncelikli domain başarıyla bulundu: {final_url}")
             return final_url
@@ -61,20 +60,29 @@ def main():
             page.goto(domain, timeout=20000, wait_until='domcontentloaded')
             
             channels = {}
-            # --- BURASI DÜZELTİLDİ ---
-            tab_content = page.locator('div[id="24-7-tab"]')
             
-            channel_links = tab_content.locator('a.channel-item').all()
-
-            for link in channel_links:
-                href = link.get_attribute('href')
-                name_div = link.locator('div.channel-name')
-                if href and name_div and 'id=' in href:
-                    channel_id = href.split('id=')[-1]
-                    channel_name = name_div.inner_text().strip()
-                    channels[channel_id] = (channel_name, "7/24 Kanallar")
+            # DEĞİŞİKLİK: Artık birden fazla sekme ID'sini arayacağız
+            tab_ids_to_scrape = ["matches-tab", "24-7-tab"]
             
-            print(f"✅ {len(channels)} adet 7/24 kanalı başarıyla bulundu.")
+            for tab_id in tab_ids_to_scrape:
+                print(f"-> '{tab_id}' sekmesi taranıyor...")
+                tab_content = page.locator(f'div[id="{tab_id}"]')
+                
+                if tab_content.count() > 0:
+                    channel_links = tab_content.locator('a.channel-item').all()
+                    for link in channel_links:
+                        href = link.get_attribute('href')
+                        name_div = link.locator('div.channel-name')
+                        if href and name_div and 'id=' in href:
+                            channel_id = href.split('id=')[-1]
+                            channel_name = name_div.inner_text().strip()
+                            # Kanalları kategorilerine göre ayıralım
+                            category = "Maç Yayınları" if tab_id == "matches-tab" else "7/24 Kanallar"
+                            channels[channel_id] = (channel_name, category)
+                else:
+                    print(f"⚠️ '{tab_id}' sekmesi bulunamadı.")
+            
+            print(f"✅ Toplam {len(channels)} adet benzersiz kanal/yayın bulundu.")
         except PlaywrightError as e:
             print(f"❌ Ana sayfa okunurken hata oluştu: {e}")
             browser.close()
@@ -87,10 +95,20 @@ def main():
 
         m3u_content = []
         output_filename = "kanallar.m3u8"
-        print(f"\n📺 {len(channels)} kanal için linkler işleniyor...")
+        print(f"\n📺 {len(channels)} kanal/yayın için linkler işleniyor...")
         created = 0
         
         for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
+            # Eğer channel_id zaten bir URL ise, baseurl araması yapma
+            if channel_id.startswith('http'):
+                print(f"[{i}/{len(channels)}] {channel_name} (Doğrudan Link) işleniyor...", end=' ')
+                direct_url = channel_id
+                m3u_content.append(f'#EXTINF:-1 tvg-name="{channel_name}" group-title="{category}",{channel_name}')
+                m3u_content.append(direct_url)
+                print("-> ✅ Link eklendi.")
+                created += 1
+                continue
+
             try:
                 print(f"[{i}/{len(channels)}] {channel_name} işleniyor...", end=' ')
                 url = f"{domain}/channel.html?id={channel_id}"
@@ -122,11 +140,10 @@ def main():
             header = f"""#EXTM3U
 #EXT-X-USER-AGENT:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36
 #EXT-X-REFERER:{domain}/
-#EXT-X-ORIGIN:{domain}
-"""
+#EXT-X-ORIGIN:{domain}"""
             with open(output_filename, "w", encoding="utf-8") as f:
                 f.write(header)
-                f.write("\n\n")
+                f.write("\n") 
                 f.write("\n".join(m3u_content))
             print(f"\n📂 {created} kanal başarıyla '{output_filename}' dosyasına kaydedildi.")
         else:
