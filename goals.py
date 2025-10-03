@@ -7,18 +7,18 @@ from playwright.sync_api import sync_playwright, Error as PlaywrightError
 def find_working_domain(page):
     """Verilen aralıkta çalışan ve doğru formattaki trgoals domain'ini bulur."""
     
-    # Öncelikli olarak bilinen domain'i dene
     MANUAL_DOMAIN = "https://trgoals1423.xyz"
     print(f"\n🔍 Öncelikli domain deneniyor: {MANUAL_DOMAIN}")
     try:
         response = page.goto(MANUAL_DOMAIN, timeout=20000, wait_until='domcontentloaded')
         if response and response.ok:
-            print(f"✅ Öncelikli domain başarıyla bulundu: {page.url}")
-            return MANUAL_DOMAIN.rstrip('/')
+            # Sayfa URL'sinin sonundaki '/' işaretini kaldır
+            final_url = page.url.rstrip('/')
+            print(f"✅ Öncelikli domain başarıyla bulundu: {final_url}")
+            return final_url
     except PlaywrightError as e:
         print(f"⚠️ Öncelikli domain'e bağlanılamadı (Hata: {e.__class__.__name__}). Otomatik arama başlatılacak...")
 
-    # Yedek plan: Otomatik arama
     base = "https://trgoals"
     start_range = 1400
     end_range = 2500
@@ -35,7 +35,6 @@ def find_working_domain(page):
                 print(f"✅ Otomatik arama ile domain bulundu: {final_url}")
                 return final_url
         except PlaywrightError:
-            # Hata durumunda bir sonraki domain'e geç
             continue
             
     return None
@@ -45,7 +44,6 @@ def main():
         print("🚀 Playwright ile M3U8 Kanal İndirici Başlatılıyor...")
         
         browser = p.chromium.launch(headless=True)
-        # Gerçek bir tarayıcıyı daha iyi taklit etmek için context oluşturalım
         context = browser.new_context(
             user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
         )
@@ -63,7 +61,9 @@ def main():
             page.goto(domain, timeout=20000, wait_until='domcontentloaded')
             
             channels = {}
-            tab_content = page.locator('div#24-7-tab')
+            # --- BURASI DÜZELTİLDİ ---
+            tab_content = page.locator('div[id="24-7-tab"]')
+            
             channel_links = tab_content.locator('a.channel-item').all()
 
             for link in channel_links:
@@ -111,7 +111,7 @@ def main():
                 
                 print("-> ✅ Link bulundu.")
                 created += 1
-                time.sleep(0.5) # Tarayıcı işlemlerinde biraz daha beklemek iyi olabilir
+                time.sleep(0.5)
             except PlaywrightError:
                 print("-> ❌ Sayfaya ulaşılamadı.")
                 continue
