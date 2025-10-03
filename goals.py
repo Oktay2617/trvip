@@ -58,8 +58,6 @@ def main():
         print(f"\n📡 Kanallar ana sayfadan çekiliyor: {domain}")
         try:
             page.goto(domain, timeout=20000, wait_until='domcontentloaded')
-            
-            # DEĞİŞİKLİK: Olası JavaScript yüklemeleri için 3 saniye bekle
             print("... Sayfadaki dinamik içeriklerin yüklenmesi için 3 saniye bekleniyor ...")
             page.wait_for_timeout(3000)
 
@@ -78,7 +76,16 @@ def main():
                         if href and name_div and 'id=' in href:
                             channel_id = href.split('id=')[-1]
                             channel_name = name_div.inner_text().strip()
-                            category = "Maç Yayınları" if tab_id == "matches-tab" else "7/24 Kanallar"
+                            
+                            # DEĞİŞİKLİK 1: Dinamik Grup Adlandırma
+                            category = ""
+                            if tab_id == "matches-tab":
+                                category = "Maç Yayınları"
+                            else: # 24-7-tab için
+                                # Kanal adının ilk kelimesini al
+                                first_word = channel_name.split(' ')[0]
+                                category = first_word
+                                
                             channels[channel_id] = (channel_name, category)
                 else:
                     print(f"⚠️ '{tab_id}' sekmesi bulunamadı.")
@@ -93,15 +100,21 @@ def main():
             print("❌ Hiç kanal bulunamadı. İşlem durduruluyor.")
             browser.close()
             sys.exit(1)
+            
+        # DEĞİŞİKLİK 2: Kanal Listesini Sıralama
+        # 'Maç Yayınları' kategorisini listenin başına almak için sırala
+        print("\n🔄 Kanallar sıralanıyor: Maç yayınları en üste alınacak...")
+        sorted_channels = sorted(channels.items(), key=lambda item: item[1][1] != 'Maç Yayınları')
 
         m3u_content = []
-        output_filename = "kanallar.m.3u8"
-        print(f"\n📺 {len(channels)} kanal/yayın için linkler işleniyor...")
+        output_filename = "kanallar.m3u8"
+        print(f"\n📺 {len(sorted_channels)} kanal/yayın için linkler işleniyor...")
         created = 0
         
-        for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
+        # Sıralanmış liste üzerinden döngüye gir
+        for i, (channel_id, (channel_name, category)) in enumerate(sorted_channels, 1):
             if channel_id.startswith('http'):
-                print(f"[{i}/{len(channels)}] {channel_name} (Doğrudan Link) işleniyor...", end=' ')
+                print(f"[{i}/{len(sorted_channels)}] {channel_name} (Doğrudan Link) işleniyor...", end=' ')
                 direct_url = channel_id
                 m3u_content.append(f'#EXTINF:-1 tvg-name="{channel_name}" group-title="{category}",{channel_name}')
                 m3u_content.append(direct_url)
@@ -110,7 +123,7 @@ def main():
                 continue
 
             try:
-                print(f"[{i}/{len(channels)}] {channel_name} işleniyor...", end=' ')
+                print(f"[{i}/{len(sorted_channels)}] {channel_name} işleniyor...", end=' ')
                 url = f"{domain}/channel.html?id={channel_id}"
                 page.goto(url, timeout=15000, wait_until='domcontentloaded')
                 
@@ -153,7 +166,7 @@ def main():
         print("📊 İŞLEM SONUCLARI")
         print("="*50)
         print(f"✅ Başarıyla oluşturulan link: {created}")
-        print(f"❌ Başarısız veya atlanan kanal: {len(channels) - created}")
+        print(f"❌ Başarısız veya atlanan kanal: {len(sorted_channels) - created}")
         print("\n🎉 İşlem başarıyla tamamlandı!")
 
 if __name__ == "__main__":
