@@ -51,7 +51,6 @@ def main():
             sys.exit(1)
 
         channels = {
-            # ... Sizin kanal listeniz ...
             "yayinzirve": ("beIN Sports 1 ☪️", "BeinSports"), "yayininat": ("beIN Sports 1 ⭐", "BeinSports"),
             "yayin1": ("beIN Sports 1 ♾️", "BeinSports"), "yayinb2": ("beIN Sports 2", "BeinSports"),
             "yayinb3": ("beIN Sports 3", "BeinSports"), "yayinb4": ("beIN Sports 4", "BeinSports"),
@@ -73,30 +72,37 @@ def main():
         output_filename = "kanallar.m3u8"
         print(f"\n📺 {len(channels)} kanal için linkler işleniyor...")
         
+        # M3U başlığı için kullanılacak genel başlıkları burada tanımlayalım
+        # İlk başarılı kanaldan sonra güncellenecekler
+        general_referer = f"{domain}/"
+        general_origin = domain
+
         for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
             try:
                 print(f"[{i}/{len(channels)}] {channel_name} işleniyor...", end=' ')
                 url = f"{domain}/channel.html?id={channel_id}"
                 
                 # DEĞİŞİKLİK: .m3u8 ile biten ağ isteğini bekle ve yakala
-                with page.expect_request("**/*.m3u8", timeout=15000) as request_info:
-                    page.goto(url, wait_until='domcontentloaded')
+                with page.expect_request("**/*.m3u8", timeout=20000) as request_info:
+                    page.goto(url, wait_until='domcontentloaded', timeout=20000)
                 
                 m3u8_request = request_info.value
                 headers = m3u8_request.headers
                 
                 direct_url = m3u8_request.url
-                # Gerçek başlıkları al, eğer yoksa domain'i yedek olarak kullan
-                referer = headers.get('referer', f"{domain}/")
-                origin = headers.get('origin', domain)
+                # Gerçek referer'ı al, eğer yoksa genel olanı kullan
+                referer = headers.get('referer', general_referer)
+
+                # İlk başarılı kanaldan genel başlıkları güncelle
+                if len(found_channels_data) == 0:
+                    general_referer = referer
+                    general_origin = headers.get('origin', domain)
 
                 # Bulunan tüm verileri daha sonra dosyaya yazmak üzere sakla
                 found_channels_data.append({
                     "channel_name": channel_name,
                     "category": category,
                     "direct_url": direct_url,
-                    "referer": referer,
-                    "origin": origin
                 })
                 
                 print("-> ✅ Link ve başlıklar yakalandı.")
@@ -108,12 +114,11 @@ def main():
         browser.close()
 
         if found_channels_data:
-            # M3U başlığı için ilk bulunan kanalın bilgilerini kullanalım, bu en doğrusu olacaktır.
-            first_channel = found_channels_data[0]
+            # M3U başlığını, ilk başarılı kanaldan yakaladığımız gerçek verilerle oluşturalım.
             header = f"""#EXTM3U
 #EXT-X-USER-AGENT:{user_agent_string}
-#EXT-X-REFERER:{first_channel['referer']}
-#EXT-X-ORIGIN:{first_channel['origin']}"""
+#EXT-X-REFERER:{general_referer}
+#EXT-X-ORIGIN:{general_origin}"""
 
             m3u_content = []
             for channel in found_channels_data:
