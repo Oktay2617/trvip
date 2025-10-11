@@ -72,8 +72,6 @@ def main():
         output_filename = "kanallar.m3u8"
         print(f"\n📺 {len(channels)} kanal için linkler işleniyor...")
         
-        # M3U başlığı için kullanılacak genel başlıkları burada tanımlayalım
-        # İlk başarılı kanaldan sonra güncellenecekler
         general_referer = f"{domain}/"
         general_origin = domain
 
@@ -82,39 +80,44 @@ def main():
                 print(f"[{i}/{len(channels)}] {channel_name} işleniyor...", end=' ')
                 url = f"{domain}/channel.html?id={channel_id}"
                 
-                # DEĞİŞİKLİK: .m3u8 ile biten ağ isteğini bekle ve yakala
+                # Sayfaya git ve tamamen yüklenmesini bekle
+                page.goto(url, wait_until='networkidle', timeout=30000)
+
+                # Ağ isteği dinleyicisini "with" bloğu ile başlat
                 with page.expect_request("**/*.m3u8", timeout=20000) as request_info:
-                    page.goto(url, wait_until='domcontentloaded', timeout=20000)
+                    # Iframe'i bul ve içine tıkla. Bu eylem .m3u8 isteğini tetikleyecek.
+                    player_frame = page.frame_locator('iframe').first
+                    # Oynatıcının herhangi bir yerine tıklamak genellikle 'play' işlevi görür.
+                    player_frame.locator('body').click(timeout=10000)
                 
+                # Yakalanan isteğin bilgilerini al
                 m3u8_request = request_info.value
                 headers = m3u8_request.headers
                 
                 direct_url = m3u8_request.url
-                # Gerçek referer'ı al, eğer yoksa genel olanı kullan
                 referer = headers.get('referer', general_referer)
+                origin = headers.get('origin', general_origin)
 
                 # İlk başarılı kanaldan genel başlıkları güncelle
-                if len(found_channels_data) == 0:
+                if not found_channels_data:
                     general_referer = referer
-                    general_origin = headers.get('origin', domain)
+                    general_origin = origin
 
-                # Bulunan tüm verileri daha sonra dosyaya yazmak üzere sakla
                 found_channels_data.append({
-                    "channel_name": channel_name,
-                    "category": category,
-                    "direct_url": direct_url,
+                    "channel_name": channel_name, "category": category,
+                    "direct_url": direct_url, "referer": referer, "origin": origin
                 })
                 
                 print("-> ✅ Link ve başlıklar yakalandı.")
-                time.sleep(0.5)
-            except PlaywrightError:
-                print("-> ❌ Sayfa veya .m3u8 isteği zaman aşımına uğradı.")
+                time.sleep(1) # Bir sonraki kanala geçmeden önce kısa bir bekleme
+            except PlaywrightError as e:
+                # Hata mesajını daha detaylı yazdıralım
+                print(f"-> ❌ Hata: {e.__class__.__name__}. Zaman aşımı veya tıklama hatası.")
                 continue
 
         browser.close()
 
         if found_channels_data:
-            # M3U başlığını, ilk başarılı kanaldan yakaladığımız gerçek verilerle oluşturalım.
             header = f"""#EXTM3U
 #EXT-X-USER-AGENT:{user_agent_string}
 #EXT-X-REFERER:{general_referer}
