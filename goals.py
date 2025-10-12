@@ -51,77 +51,82 @@ def main():
             sys.exit(1)
 
         channels = {
+            # BeinSports Kategorisi
             "yayinzirve": ("beIN Sports 1 ☪️", "BeinSports"), "yayininat": ("beIN Sports 1 ⭐", "BeinSports"),
             "yayin1": ("beIN Sports 1 ♾️", "BeinSports"), "yayinb2": ("beIN Sports 2", "BeinSports"),
             "yayinb3": ("beIN Sports 3", "BeinSports"), "yayinb4": ("beIN Sports 4", "BeinSports"),
             "yayinb5": ("beIN Sports 5", "BeinSports"), "yayinbm1": ("beIN Sports 1 Max", "BeinSports"),
-            "yayinbm2": ("beIN Sports 2 Max", "BeinSports"), "yayinss": ("Saran Sports 1", "S Sports"),
-            "yayinss2": ("Saran Sports 2", "S Sports"), "yayint1": ("Tivibu Sports 1", "Tivibu"),
-            "yayint2": ("Tivibu Sports 2", "Tivibu"), "yayint3": ("Tivibu Sports 3", "Tivibu"),
-            "yayint4": ("Tivibu Sports 4", "Tivibu"), "yayinsmarts": ("Smart Sports", "Smart Sports"),
-            "yayinsms2": ("Smart Sports 2", "Smart Sports"), "yayinnbatv": ("NBA TV", "NBA"),
+            "yayinbm2": ("beIN Sports 2 Max", "BeinSports"),
+            # S Sports Kategorisi
+            "yayinss": ("Saran Sports 1", "S Sports"), "yayinss2": ("Saran Sports 2", "S Sports"),
+            # Tivibu Kategorisi
+            "yayint1": ("Tivibu Sports 1", "Tivibu"), "yayint2": ("Tivibu Sports 2", "Tivibu"),
+            "yayint3": ("Tivibu Sports 3", "Tivibu"), "yayint4": ("Tivibu Sports 4", "Tivibu"),
+            # Smart Sports Kategorisi
+            "yayinsmarts": ("Smart Sports", "Smart Sports"), "yayinsms2": ("Smart Sports 2", "Smart Sports"),
+            # NBA Kategorisi
+            "yayinnbatv": ("NBA TV", "NBA"),
+            # Ulusal Kategorisi
             "yayinatv": ("ATV", "Ulusal"), "yayintv8": ("TV8", "Ulusal"), "yayintv85": ("TV8.5", "Ulusal"),
-            "yayinas": ("A Spor", "Ulusal"), "yayinex1": ("Tâbii 1", "Tabii"), "yayinex2": ("Tâbii 2", "Tabii"),
+            "yayinas": ("A Spor", "Ulusal"),
+            # Tabii Kategorisi
+            "yayinex1": ("Tâbii 1", "Tabii"), "yayinex2": ("Tâbii 2", "Tabii"),
             "yayinex3": ("Tâbii 3", "Tabii"), "yayinex4": ("Tâbii 4", "Tabii"), "yayinex5": ("Tâbii 5", "Tabii"),
             "yayinex6": ("Tâbii 6", "Tabii"), "yayinex7": ("Tâbii 7", "Tabii"), "yayinex8": ("Tâbii 8", "Tabii"),
+            # TRT Kategorisi
             "yayintrt1": ("TRT 1", "TRT"), "yayintrtspor": ("TRT Spor", "TRT"), "yayintrtspor2": ("TRT Spor 2", "TRT"),
+            # Euro Sport Kategorisi
             "yayineu1": ("Euro Sport 1", "Euro Sport"), "yayineu2": ("Euro Sport 2", "Euro Sport"),
         }
         
+        # Dosyaya yazmadan önce tüm başarılı kanal verilerini burada toplayacağız
         found_channels_data = []
         output_filename = "kanallar.m3u8"
         print(f"\n📺 {len(channels)} kanal için linkler işleniyor...")
         
-        general_referer = f"{domain}/"
-        general_origin = domain
-
         for i, (channel_id, (channel_name, category)) in enumerate(channels.items(), 1):
             try:
                 print(f"[{i}/{len(channels)}] {channel_name} işleniyor...", end=' ')
                 url = f"{domain}/channel.html?id={channel_id}"
                 
-                # Sayfaya git ve tamamen yüklenmesini bekle
-                page.goto(url, wait_until='networkidle', timeout=30000)
-
-                # Ağ isteği dinleyicisini "with" bloğu ile başlat
+                # KRİTİK DEĞİŞİKLİK: Sayfaya gitmeden önce .m3u8 ile biten bir ağ isteği beklediğimizi belirtiyoruz.
                 with page.expect_request("**/*.m3u8", timeout=20000) as request_info:
-                    # Iframe'i bul ve içine tıkla. Bu eylem .m3u8 isteğini tetikleyecek.
-                    player_frame = page.frame_locator('iframe').first
-                    # Oynatıcının herhangi bir yerine tıklamak genellikle 'play' işlevi görür.
-                    player_frame.locator('body').click(timeout=10000)
+                    # Bu eylem, yukarıdaki beklenen isteği tetikleyecek
+                    page.goto(url, wait_until='domcontentloaded', timeout=20000)
                 
-                # Yakalanan isteğin bilgilerini al
+                # İstek yakalandı, şimdi detaylarını alalım
                 m3u8_request = request_info.value
                 headers = m3u8_request.headers
                 
                 direct_url = m3u8_request.url
-                referer = headers.get('referer', general_referer)
-                origin = headers.get('origin', general_origin)
+                # Gerçek başlıkları al, eğer yoksa domain'i yedek olarak kullan
+                referer = headers.get('referer', f"{domain}/")
+                origin = headers.get('origin', domain)
 
-                # İlk başarılı kanaldan genel başlıkları güncelle
-                if not found_channels_data:
-                    general_referer = referer
-                    general_origin = origin
-
+                # Bulunan tüm verileri daha sonra dosyaya yazmak üzere listeye ekle
                 found_channels_data.append({
-                    "channel_name": channel_name, "category": category,
-                    "direct_url": direct_url, "referer": referer, "origin": origin
+                    "channel_name": channel_name,
+                    "category": category,
+                    "direct_url": direct_url,
+                    "referer": referer,
+                    "origin": origin
                 })
                 
                 print("-> ✅ Link ve başlıklar yakalandı.")
-                time.sleep(1) # Bir sonraki kanala geçmeden önce kısa bir bekleme
-            except PlaywrightError as e:
-                # Hata mesajını daha detaylı yazdıralım
-                print(f"-> ❌ Hata: {e.__class__.__name__}. Zaman aşımı veya tıklama hatası.")
+                time.sleep(0.5)
+            except PlaywrightError:
+                print("-> ❌ Sayfa veya .m3u8 isteği zaman aşımına uğradı.")
                 continue
 
         browser.close()
 
         if found_channels_data:
+            # M3U başlığı için İLK bulunan kanalın bilgilerini kullanalım, bu en doğrusu olacaktır.
+            first_channel = found_channels_data[0]
             header = f"""#EXTM3U
 #EXT-X-USER-AGENT:{user_agent_string}
-#EXT-X-REFERER:{general_referer}
-#EXT-X-ORIGIN:{general_origin}"""
+#EXT-X-REFERER:{first_channel['referer']}
+#EXT-X-ORIGIN:{first_channel['origin']}"""
 
             m3u_content = []
             for channel in found_channels_data:
